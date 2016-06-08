@@ -52,8 +52,8 @@ var request = require('supertest');
 
 var expect = chai.expect;
 
-describe('API tests', function() {
-  it('should have return version number', function(done) {
+describe('API Tests', function() {
+  it('should return version number', function(done) {
     request(app)
       .get('/api')
       .end(function(err, res) {
@@ -65,7 +65,7 @@ describe('API tests', function() {
 });
 ```
 
-Fantastic job! 
+Fantastic job! Reviewing the above code, we'll see that we're importing our server, Chai and SuperTest. SuperTest includes its own `.expect()` but I prefer Chai's syntax. The code sets a group of API Tests and creates one test to check if the endpoint `/api` returns a version number. Note that the `done()` function is important to declare these asynchronous tests complete.
 
 Now, let's see if it works. Run: `npm test`. You should get this:
 
