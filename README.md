@@ -85,4 +85,8 @@ Huzzah! We have tests verifying our API will work. Next up? Adding some more com
 
 ## Advanced Testing
 
+So we have some integration tests being run against our newly created Express server. That's fine, I guess. But let's get a little more complex by adding some faux-authentication endpoints that validate parameters and return errors under different circumstances. 
+
+To get more complex, let's add the [express-validator](https://github.com/ctavan/express-validator) package. It requires the [Express body-parser](https://github.com/expressjs/body-parser) package, so we'll install and save both: `npm i express-validator bodyparser --save`
+
 ...
