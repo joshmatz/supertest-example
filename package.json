@@ -1,0 +1,22 @@
+{
+  "name": "integration-tests",
+  "version": "1.0.0",
+  "description": "Integration test example using Express and SuperTest",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha '**/*.spec.js'"
+  },
+  "author": "Josh Matz",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "chai": "^3.5.0",
+    "express": "^4.13.4",
+    "express-validator": "^2.20.5",
+    "supertest": "^1.2.0"
+  },
+  "engines": {
+    "node": "4.2.2",
+    "npm": "3.6.0"
+  }
+}
