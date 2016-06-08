@@ -81,4 +81,8 @@ Now, let's see if it works. Run: `npm test`. You should get this:
   1 passing (41ms)
 ```
 
-Huzzah! We have tests verifying our API will work.
+Huzzah! We have tests verifying our API will work. Next up? Adding some more complex testing.
+
+## Advanced Testing
+
+...
