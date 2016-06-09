@@ -89,4 +89,131 @@ So we have some integration tests being run against our newly created Express se
 
 To get more complex, let's add the [express-validator](https://github.com/ctavan/express-validator) package. It requires the [Express body-parser](https://github.com/expressjs/body-parser) package, so we'll install and save both: `npm i express-validator bodyparser --save`
 
-...
+### Faux-authentication
+
+All right, to keep it simple — and not add complications like session management — we're going to store a list of users in memory in an array. This array will reset every time our server is started. We'll create an `/api/register` endpoint that pushes a user into the array and we'll create an `/api/login` endpoint that returns us an item from that array. We'll require some validation on these endpoints to ensure a valid user is created upon registration and a valid user is being requested upon login.
+
+Let's get started. First, copy and paste this code right below `var app = new express();` in your `server.js` file: 
+
+```
+var users = [];
+
+// Required to get access to `req.body`.
+app.use(bodyParser.json());
+
+// Connects expressValidator so it can transform the req object.
+app.use(expressValidator({
+  customValidators: {
+    isExistingUser: function(value) {
+      return !!users[value];
+    }
+  }
+}));
+```
+
+This code establishes the `users` array we'll be using, connects the required `bodyParser` (importantly done before `expressValidator`), and then connects `expressValidator` and creates a custom validator method to check if a user exists.
+
+Now that we've got those out of the way, let's add our endpoints below the code we just added:
+
+```
+app.post('/api/register', function(req, res) {
+  req.checkBody({
+    name: {
+      isAlpha: true,
+      isLength: {
+        options: [{ min: 2, max: 50 }],
+        errorMessage: 'Name must be between 2 and 50 characters.'
+      },
+      errorMessage: 'Name must have only alphabetical characters.'
+    }
+  });
+
+  var errors = req.validationErrors();
+
+  if (errors) {
+    return res.status(400).json({
+      errors: errors
+    });
+  }
+
+  var userIndex = users.push(req.body) - 1;
+
+  res.json(users[userIndex]);
+});
+
+app.post('/api/login', function(req, res) {
+  req.checkBody({
+    userID: {
+      isNumeric: true,
+      isExistingUser: {
+        errorMessage: 'That user does not exist.'
+      },
+      errorMessage: 'Authentication requires a number.'
+    }
+  });
+
+  var errors = req.validationErrors();
+
+  if (errors) {
+    return res.status(400).json({
+      errors: errors
+    });
+  }
+
+  res.json(users[req.body.userID]);
+});
+```
+
+To recap, we just added two endpoints: `/api/register` and `/api/login`. These two requests will verify that the `req.body.userID` is formatted how we need it. If it's not formatted correctly, we'll return which validation checks failed. If it is formatted correct, we'll return the user.
+
+Next up is the tests to see if this code actually works. Open up your `tests.spec.js` file and add this below our version test:
+
+```
+  describe('Registration Tests', function() {
+    it('should return the user if the name is valid', function(done) {
+      request(app)
+      .post('/api/register')
+      .send({name: 'JoshMatz'})
+      .end(function(err, res) {
+        expect(res.body.name).to.be.equal('JoshMatz');
+        expect(res.statusCode).to.be.equal(200);
+        done();
+      });
+    });
+  });
+  
+  describe('Login Tests', function() {
+    it('should return the user if valid', function(done) {
+      request(app)
+      .post('/api/login')
+      .send({userID: 0})
+      .end(function(err, res) {
+        expect(res.body.name).to.be.equal('JoshMatz');
+        expect(res.statusCode).to.be.equal(200);
+        done();
+      });
+    });
+  });
+```
+
+This creates tests for our registration and login routes and verifies that the returned data is what we'd expect it to be. Now, when you run `npm test`, you should see something like this:
+
+```
+» npm test
+
+> integration-tests@1.0.0 test /Users/joshmatz/Projects/InVision/integration-tests
+> mocha '**/*.spec.js'
+
+  API tests
+    ✓ should return version number
+    Registration Tests
+      ✓ should return the user if the name is valid
+    Login Tests
+      ✓ should return the user if valid
+
+  3 passing (83ms)
+```
+
+## Wrapping up
+
+That's it! We've learned how to install SuperTest and connect it to Express so we test against our code quickly and efficiently. You might've noticed that we added validation but we never created tests for it. I'll leave that up to you for a small code challenge. But, if you get stuck, I've included some tests for it in the [GitHub repository](https://github.com/joshmatz/supertest-example). Happy testing!
