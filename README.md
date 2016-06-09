@@ -91,7 +91,7 @@ To get more complex, let's add the [express-validator](https://github.com/ctavan
 
 ### Faux-authentication
 
-All right, to keep it simple — and not add complications like session management — we're going to store a list of users in memory in an array. This array will reset every time our server is started. We'll create an `/api/register` endpoint that pushes a user into the array and we'll create an `/api/login` endpoint that returns us an item from that array. We'll require some validation on these endpoints to ensure a valid user is created upon registration and a valid user is being requested upon login.
+All right, to keep it simple — and not add silly complications like passwords — we're going to store a list of users in memory in an array. This array will reset every time our server is started. We'll create an `/api/register` endpoint that pushes a user into the array and we'll create an `/api/login` endpoint that returns us an item from that array. We'll require some validation on these endpoints to ensure a valid user is created upon registration and a valid user is being requested upon login.
 
 Let's get started. First, copy and paste this code right below `var app = new express();` in your `server.js` file: 
 
